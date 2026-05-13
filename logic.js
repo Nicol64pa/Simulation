@@ -213,7 +213,7 @@ function renderCombinedChart(chart1X, chart1Y, chart1Width, chart1Height, chart1
     ctx.stroke();
     ctx.fillStyle = "black";
     ctx.font = "14px Arial";
-    ctx.fillText("Max Rabbit value: " + max, chart1X, chart1Y);
+    ctx.fillText("Max Rabbit value: " + max, chart1X, chart1Y + 180);
 
     if (chart2PopHistory.length == 0) return;
     max = Math.max(...chart2PopHistory);
@@ -234,10 +234,12 @@ function renderCombinedChart(chart1X, chart1Y, chart1Width, chart1Height, chart1
     }
     ctx.lineTo(chart2PopulationHistoryX, chart1Y + chart1Height);
     ctx.lineTo(chart1X, chart1Y + chart1Height);
+    ctx.fillStyle = "rgba(158, 105, 0, 0.3)";
+    ctx.fill();
     ctx.stroke();
     ctx.fillStyle = "black";
     ctx.font = "14px Arial";
-    ctx.fillText("Max Fox value: " + max, chart1X, chart1Y);
+    ctx.fillText("Max Fox value: " + max, chart1X + 250, chart1Y+ 180);
 
 }
 
