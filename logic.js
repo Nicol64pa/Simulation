@@ -37,6 +37,7 @@ gameLoop();
 
 document.getElementById("tickRateRange").addEventListener("input", function () {
     tickRate = 101 - this.value
+    document.getElementById("speedDisplay").textContent = this.value;
 });
 
 function reset() {

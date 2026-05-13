@@ -8,11 +8,15 @@
 </style>
 
 <body>
-    <canvas height="1000" width="1200"></canvas>
-    <div class="slidecontainer">
-        <input type="range" min="1" max="100" value="50" class="slider" id="tickRateRange">
+    <div style="display: flex; flex-direction: column; align-items: flex-start;">
+        <canvas height="600" width="1200"></canvas>
+        <div style="display: flex; align-items: center; gap: 16px; margin-top: 8px;">
+            <label>Simulation Speed:</label>
+            <input type="range" min="1" max="100" value="50" id="tickRateRange">
+            <span id="speedDisplay">50</span>
+            <button onclick="reset()">Reset</button>
+        </div>
     </div>
-    <button onclick="reset()">Reset</button>
     <script src="logic.js"></script>
 </body>
 
