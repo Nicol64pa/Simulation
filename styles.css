@@ -1,0 +1,36 @@
+body {
+    background-color: #0f0f1a;
+    color: #e8e8e8;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+}
+h1 {
+    font-size: 28px;
+    margin-bottom: 8px;
+}
+
+p {
+    font-size: 14px;
+    color: #aaaaaa;
+    max-width: 600px;
+    margin-bottom: 20px;
+}
+
+span{
+    margin: 2px 0
+}
+
+.chart-container {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 16px;
+}
+
+h3 {
+    font-size: 14px;
+    font-weight: 500;
+    margin: 0 0 4px 0;
+    color: #aaaaaa;
+    margin-bottom: 12px
+}

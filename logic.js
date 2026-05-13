@@ -1,12 +1,28 @@
+const CELL_SIZE = 16;
+const GRID_WIDTH = 40;
+const GRID_HEIGHT = 40;
+
 let canvas = document.querySelector("canvas");
 let cells = [];
 const ctx = canvas.getContext("2d");
+canvas.width = CELL_SIZE * GRID_WIDTH;
+canvas.height = CELL_SIZE * GRID_HEIGHT;
+
+const rabbitChartCanvas = document.getElementById("rabbitChart");
+const rabbitCtx = rabbitChartCanvas.getContext("2d");
+
+const foxChartCanvas = document.getElementById("foxChart");
+const foxCtx = foxChartCanvas.getContext("2d");
+
+const combinedChartCanvas = document.getElementById("combinedChart");
+const combinedCtx = combinedChartCanvas.getContext("2d");
+
+
+
 let directions = [[-1, 0], [1, 0], [0, -1], [0, 1], [-1, -1], [-1, 1], [1, -1], [1, 1]];
 let tick = 0;
 let tickRate = 10;
-const CELL_SIZE = 16;
-const GRID_WIDTH = 32;
-const GRID_HEIGHT = 32;
+
 let grassSpawnChance = 5;
 let rabbitSpawnChance = 10;
 let foxSpawnChance = 0.5;
@@ -23,10 +39,6 @@ let foxReproductionHungerCost = 100;
 let maxHistory = 200;
 let rabbitPopulationHistory = [];
 let foxPopulationHistory = [];
-const RABBIT_CHART_X = 620;
-const RABBIT_CHART_Y = 10;
-const FOX_CHART_X = 620;
-const FOX_CHART_Y = 200;
 const CHART_WIDTH = 500;
 const CHART_HEIGHT = 150;
 
@@ -59,6 +71,7 @@ function countEntitites(type) {
     }
     return count;
 }
+
 function gameLoop() {
     let rabbitCount = countEntitites("rabbit");
     let foxCount = countEntitites("fox");
@@ -67,13 +80,10 @@ function gameLoop() {
     renderGrid(cells);
     renderRabbitPopulationChart();
     renderFoxPopulationChart();
-    renderCombinedChart(620, 400, CHART_WIDTH, CHART_HEIGHT, rabbitPopulationHistory, "#e8d5b0", foxPopulationHistory, "orange");
-    ctx.fillStyle = "black";
-    ctx.font = "14px Arial";
-    ctx.fillText("Rabbits: " + rabbitCount, 536, 45);
-    ctx.fillStyle = "black";
-    ctx.font = "14px Arial";
-    ctx.fillText("Foxes: " + foxCount, 536, 245);
+    renderCombinedChart(CHART_WIDTH, CHART_HEIGHT, rabbitPopulationHistory, "#e8d5b0", foxPopulationHistory, "orange");
+    document.getElementById("rabbitCount").textContent = "Rabbits: " + rabbitCount
+    document.getElementById("foxCount").textContent = "Foxes: " + foxCount
+    document.getElementById("combinedCount").textContent = "Rabbits + Foxes: " + (foxCount+rabbitCount)
     tick++;
     if (tick % tickRate == 0) {
         cells = updateGrid(cells);
@@ -119,128 +129,119 @@ function populateGrid(grid) {
 }
 
 function renderRabbitPopulationChart() {
-    ctx.strokeStyle = "black";
-    ctx.strokeRect(RABBIT_CHART_X, RABBIT_CHART_Y, CHART_WIDTH, CHART_HEIGHT);
-    ctx.fillStyle = "#1a1a2e";
-    ctx.fillRect(RABBIT_CHART_X, RABBIT_CHART_Y, CHART_WIDTH, CHART_HEIGHT);
+    rabbitCtx.strokeStyle = "black";
+    rabbitCtx.strokeRect(0, 0, CHART_WIDTH, CHART_HEIGHT);
+    rabbitCtx.fillStyle = "#1a1a2e";
+    rabbitCtx.fillRect(0, 0, CHART_WIDTH, CHART_HEIGHT);
     if (rabbitPopulationHistory.length == 0) return;
     let max = Math.max(...rabbitPopulationHistory);
     let rabbitPopulationHistoryX;
     let lastValue;
     let rabbitPopulationHistoryY;
-    ctx.strokeStyle = "#e8d5b0"
-    ctx.beginPath();
+    rabbitCtx.strokeStyle = "#e8d5b0"
+    rabbitCtx.beginPath();
     for (let i = 0; i < rabbitPopulationHistory.length; i++) {
-        rabbitPopulationHistoryX = RABBIT_CHART_X + (i / maxHistory) * CHART_WIDTH;
+        rabbitPopulationHistoryX = (i / maxHistory) * CHART_WIDTH;
         lastValue = rabbitPopulationHistory[i];
-        rabbitPopulationHistoryY = RABBIT_CHART_Y + CHART_HEIGHT - (lastValue / max) * CHART_HEIGHT;
+        rabbitPopulationHistoryY = CHART_HEIGHT - (lastValue / max) * CHART_HEIGHT;
         if (i === 0) {
-            ctx.moveTo(rabbitPopulationHistoryX, rabbitPopulationHistoryY);
+            rabbitCtx.moveTo(rabbitPopulationHistoryX, rabbitPopulationHistoryY);
         } else {
-            ctx.lineTo(rabbitPopulationHistoryX, rabbitPopulationHistoryY);
+            rabbitCtx.lineTo(rabbitPopulationHistoryX, rabbitPopulationHistoryY);
         }
 
     }
-    ctx.lineTo(rabbitPopulationHistoryX, RABBIT_CHART_Y + CHART_HEIGHT);
-    ctx.lineTo(RABBIT_CHART_X, RABBIT_CHART_Y + CHART_HEIGHT);
-    ctx.fillStyle = "rgba(232, 213, 176, 0.3)";
-    ctx.fill();
-    ctx.stroke();
-    ctx.fillStyle = "black";
-    ctx.font = "14px Arial";
-    ctx.fillText("Max value: " + max, 520, 125);
+    rabbitCtx.lineTo(rabbitPopulationHistoryX, CHART_HEIGHT);
+    rabbitCtx.lineTo(0, CHART_HEIGHT);
+    rabbitCtx.fillStyle = "rgba(232, 213, 176, 0.3)";
+    rabbitCtx.fill();
+    rabbitCtx.stroke();
 }
 
 function renderFoxPopulationChart() {
-    ctx.strokeStyle = "black";
-    ctx.strokeRect(FOX_CHART_X, FOX_CHART_Y, CHART_WIDTH, CHART_HEIGHT);
-    ctx.fillStyle = "#1a1a2e";
-    ctx.fillRect(FOX_CHART_X, FOX_CHART_Y, CHART_WIDTH, CHART_HEIGHT);
+    foxCtx.strokeStyle = "black";
+    foxCtx.strokeRect(0, 0, CHART_WIDTH, CHART_HEIGHT);
+    foxCtx.fillStyle = "#1a1a2e";
+    foxCtx.fillRect(0, 0, CHART_WIDTH, CHART_HEIGHT);
     if (foxPopulationHistory.length == 0) return;
     let max = Math.max(...foxPopulationHistory);
     let foxPopulationHistoryX;
     let lastValue;
     let foxPopulationHistoryY;
-    ctx.strokeStyle = "orange"
-    ctx.beginPath();
+    foxCtx.strokeStyle = "orange"
+    foxCtx.beginPath();
     for (let i = 0; i < foxPopulationHistory.length; i++) {
-        foxPopulationHistoryX = FOX_CHART_X + (i / maxHistory) * CHART_WIDTH;
+        foxPopulationHistoryX = (i / maxHistory) * CHART_WIDTH;
         lastValue = foxPopulationHistory[i];
-        foxPopulationHistoryY = FOX_CHART_Y + CHART_HEIGHT - (lastValue / max) * CHART_HEIGHT;
+        foxPopulationHistoryY = CHART_HEIGHT - (lastValue / max) * CHART_HEIGHT;
         if (i === 0) {
-            ctx.moveTo(foxPopulationHistoryX, foxPopulationHistoryY);
+            foxCtx.moveTo(foxPopulationHistoryX, foxPopulationHistoryY);
         } else {
-            ctx.lineTo(foxPopulationHistoryX, foxPopulationHistoryY);
+            foxCtx.lineTo(foxPopulationHistoryX, foxPopulationHistoryY);
         }
 
     }
-    ctx.lineTo(foxPopulationHistoryX, FOX_CHART_Y + CHART_HEIGHT);
-    ctx.lineTo(FOX_CHART_X, FOX_CHART_Y + CHART_HEIGHT);
-    ctx.fillStyle = "rgba(158, 105, 0, 0.3)";
-    ctx.fill();
-    ctx.stroke();
-    ctx.fillStyle = "black";
-    ctx.font = "14px Arial";
-    ctx.fillText("Max value: " + max, 520, 325);
+    foxCtx.lineTo(foxPopulationHistoryX, CHART_HEIGHT);
+    foxCtx.lineTo(0, CHART_HEIGHT);
+    foxCtx.fillStyle = "rgba(158, 105, 0, 0.3)";
+    foxCtx.fill();
+    foxCtx.stroke();
 }
 
-function renderCombinedChart(chart1X, chart1Y, chart1Width, chart1Height, chart1PopHistory, chart1LineColor, chart2PopHistory, chart2LineColor) {
-    ctx.strokeStyle = "black";
-    ctx.strokeRect(chart1X, chart1Y, chart1Width, chart1Height);
-    ctx.fillStyle = "#1a1a2e";
-    ctx.fillRect(chart1X, chart1Y, chart1Width, chart1Height);
+function renderCombinedChart(chart1Width, chart1Height, chart1PopHistory, chart1LineColor, chart2PopHistory, chart2LineColor) {
+    combinedCtx.strokeStyle = "black";
+    combinedCtx.strokeRect(0, 0, chart1Width, chart1Height);
+    combinedCtx.fillStyle = "#1a1a2e";
+    combinedCtx.fillRect(0, 0, chart1Width, chart1Height);
     if (chart1PopHistory.length == 0) return;
     let max = Math.max(...chart1PopHistory);
     let chart1PopulationHistoryX;
     let lastValue;
     let chart1PopulationHistoryY;
-    ctx.strokeStyle = chart1LineColor
-    ctx.beginPath();
+    combinedCtx.strokeStyle = chart1LineColor
+    combinedCtx.beginPath();
     for (let i = 0; i < chart1PopHistory.length; i++) {
-        chart1PopulationHistoryX = chart1X + (i / maxHistory) * chart1Width;
+        chart1PopulationHistoryX = (i / maxHistory) * chart1Width;
         lastValue = chart1PopHistory[i];
-        chart1PopulationHistoryY = chart1Y + chart1Height - (lastValue / max) * chart1Height;
+        chart1PopulationHistoryY = chart1Height - (lastValue / max) * chart1Height;
         if (i === 0) {
-            ctx.moveTo(chart1PopulationHistoryX, chart1PopulationHistoryY);
+            combinedCtx.moveTo(chart1PopulationHistoryX, chart1PopulationHistoryY);
         } else {
-            ctx.lineTo(chart1PopulationHistoryX, chart1PopulationHistoryY);
+            combinedCtx.lineTo(chart1PopulationHistoryX, chart1PopulationHistoryY);
         }
 
     }
-    ctx.lineTo(chart1PopulationHistoryX, chart1Y + chart1Height);
-    ctx.lineTo(chart1X, chart1Y + chart1Height);
-    ctx.fillStyle = "rgba(232, 213, 176, 0.3)";
-    ctx.fill();
-    ctx.stroke();
-    ctx.fillStyle = "black";
-    ctx.font = "14px Arial";
-    ctx.fillText("Max Rabbit value: " + max, chart1X, chart1Y + 180);
+    combinedCtx.lineTo(chart1PopulationHistoryX, chart1Height);
+    combinedCtx.lineTo(0, chart1Height);
+    combinedCtx.fillStyle = "rgba(232, 213, 176, 0.3)";
+    combinedCtx.fill();
+    combinedCtx.stroke();
+    document.getElementById("maxRabbitValue").textContent = "Max Rabbit value: " + max;
+    
 
     if (chart2PopHistory.length == 0) return;
     max = Math.max(...chart2PopHistory);
     let chart2PopulationHistoryX;
     let chart2PopulationHistoryY;
-    ctx.strokeStyle = chart2LineColor
-    ctx.beginPath();
+    combinedCtx.strokeStyle = chart2LineColor
+    combinedCtx.beginPath();
     for (let i = 0; i < chart2PopHistory.length; i++) {
-        chart2PopulationHistoryX = chart1X + (i / maxHistory) * chart1Width;
+        chart2PopulationHistoryX = (i / maxHistory) * chart1Width;
         lastValue = chart2PopHistory[i];
-        chart2PopulationHistoryY = chart1Y + chart1Height - (lastValue / max) * chart1Height;
+        chart2PopulationHistoryY = chart1Height - (lastValue / max) * chart1Height;
         if (i === 0) {
-            ctx.moveTo(chart2PopulationHistoryX, chart2PopulationHistoryY);
+            combinedCtx.moveTo(chart2PopulationHistoryX, chart2PopulationHistoryY);
         } else {
-            ctx.lineTo(chart2PopulationHistoryX, chart2PopulationHistoryY);
+            combinedCtx.lineTo(chart2PopulationHistoryX, chart2PopulationHistoryY);
         }
 
     }
-    ctx.lineTo(chart2PopulationHistoryX, chart1Y + chart1Height);
-    ctx.lineTo(chart1X, chart1Y + chart1Height);
-    ctx.fillStyle = "rgba(158, 105, 0, 0.3)";
-    ctx.fill();
-    ctx.stroke();
-    ctx.fillStyle = "black";
-    ctx.font = "14px Arial";
-    ctx.fillText("Max Fox value: " + max, chart1X + 250, chart1Y+ 180);
+    combinedCtx.lineTo(chart2PopulationHistoryX, chart1Height);
+    combinedCtx.lineTo(0, chart1Height);
+    combinedCtx.fillStyle = "rgba(158, 105, 0, 0.3)";
+    combinedCtx.fill();
+    combinedCtx.stroke();
+    document.getElementById("maxFoxValue").textContent = "Max Fox value: " + max;
 
 }
 
@@ -510,18 +511,6 @@ function shuffle(array) {
     for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [array[i], array[j]] = [array[j], array[i]];
-    }
-}
-
-function interact(occupant1, occupant2, x, y, x2, y2) {
-    if (occupant1.type == "rabbit" && occupant2.type == "rabbit") {
-        while (true) {
-            let dir = directions[Math.floor(Math.random() * directions.length)];
-            if (dir[0] != x && dir[0] != x2 && dir[1] != y && dir[1] != y2) {
-                break;
-            }
-        }
-        return createRabbit();
     }
 }
 

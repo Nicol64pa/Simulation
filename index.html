@@ -1,21 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
 <meta charset="UTF-8">
-<title>Page Title</title>
+<title>Ecosystem Simulator</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <link rel="stylesheet" href="styles.css">
 <style>
 </style>
 
 <body>
-    <div style="display: flex; flex-direction: column; align-items: flex-start;">
-        <canvas height="600" width="1200"></canvas>
-        <div style="display: flex; align-items: center; gap: 16px; margin-top: 8px;">
-            <label>Simulation Speed:</label>
-            <input type="range" min="1" max="100" value="50" id="tickRateRange">
-            <span id="speedDisplay">50</span>
-            <button onclick="reset()">Reset</button>
+    <h1>Ecosystem Simulator</h1>
+    <p>A predator-prey simulation demonstrating emergent Lotka-Volterra population dynamics. Foxes hunt rabbits, rabbits
+        eat grass, and complex cycles emerge from simple rules.</p>
+    <div style="display: flex; gap: 32px; align-items: flex-start;">
+        <canvas height="512" width="512"></canvas>
+        <div class="charts-panel">
+            <div class="chart-container">
+                <h3>Rabbit Population</h3>
+                <canvas id="rabbitChart" width="700" height="150"></canvas>
+                <span id="rabbitCount">Rabbits: 0</span>
+                <span id="maxRabbitValue">Max value: </span>
+            </div>
+            <div class="chart-container">
+                <h3>Fox Population</h3>
+                <canvas id="foxChart" width="700" height="150"></canvas>
+                <span id="foxCount">Foxes: 0</span>
+                <span id="maxFoxValue">Max value: </span>
+            </div>
+            <div class="chart-container">
+                <h3>Combined Chart</h3>
+                <canvas id="combinedChart" width="700" height="150"></canvas>
+                <span id="combinedCount">Total: 0</span>
+            </div>
+            
+            
         </div>
+    </div>
+    <div style="display: flex; align-items: center; gap: 16px; margin-top: 8px;">
+        <label>Simulation Speed:</label>
+        <input type="range" min="1" max="100" value="50" id="tickRateRange">
+        <span id="speedDisplay">50</span>
+        <button onclick="reset()">Reset</button>
+    </div>
     </div>
     <script src="logic.js"></script>
 </body>
