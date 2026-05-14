@@ -1,6 +1,21 @@
 const CELL_SIZE = 16;
 const GRID_WIDTH = 40;
 const GRID_HEIGHT = 40;
+const DEFAULT_TICK_RATE = 10;
+const DEFAULT_GRASS_SPAWN_CHANCE = 5;
+const DEFAULT_RABBIT_SPAWN_CHANCE = 10;
+const DEFAULT_FOX_SPAWN_CHANCE = 0.5;
+const DEFAULT_RABBIT_HUNGER_INCREASE = 25;
+const DEFAULT_RABBIT_HUNGER_DECREASE = 10;
+const DEFAULT_RABBIT_REPRODUCTION_THRESHOLD = 150;
+const DEFAULT_RABBIT_REPRODUCTION_CHANCE = 20;
+const DEFAULT_RABBIT_REPRODUCTION_HUNGER_COST = 50;
+const DEFAULT_FOX_HUNGER_INCREASE = 20;
+const DEFAULT_FOX_HUNGER_DECREASE = 25;
+const DEFAULT_FOX_REPRODUCTION_THRESHOLD = 200;
+const DEFAULT_FOX_REPRODUCTION_CHANCE = 5;
+const DEFAULT_FOX_REPRODUCTION_HUNGER_COST = 100;
+
 
 let canvas = document.querySelector("canvas");
 let cells = [];
@@ -21,21 +36,20 @@ const combinedCtx = combinedChartCanvas.getContext("2d");
 
 let directions = [[-1, 0], [1, 0], [0, -1], [0, 1], [-1, -1], [-1, 1], [1, -1], [1, 1]];
 let tick = 0;
-let tickRate = 10;
-
-let grassSpawnChance = 5;
-let rabbitSpawnChance = 10;
-let foxSpawnChance = 0.5;
-let rabbitHungerIncrease = 25;
-let rabbitHungerDecrease = 10;
-let rabbitReproductionThreshold = 150;
-let rabbitReproductionChance = 20;
-let rabbitReproductionHungerCost = 50;
-let foxHungerIncrease = 20;
-let foxHungerDecrease = 25;
-let foxReproductionThreshold = 200;
-let foxReproductionChance = 5;
-let foxReproductionHungerCost = 100;
+let tickRate = DEFAULT_TICK_RATE;
+let grassSpawnChance = DEFAULT_GRASS_SPAWN_CHANCE;
+let rabbitSpawnChance = DEFAULT_RABBIT_SPAWN_CHANCE;
+let foxSpawnChance = DEFAULT_FOX_SPAWN_CHANCE;
+let rabbitHungerIncrease = DEFAULT_RABBIT_HUNGER_INCREASE;
+let rabbitHungerDecrease = DEFAULT_RABBIT_HUNGER_DECREASE;
+let rabbitReproductionThreshold = DEFAULT_RABBIT_REPRODUCTION_THRESHOLD;
+let rabbitReproductionChance = DEFAULT_RABBIT_REPRODUCTION_CHANCE;
+let rabbitReproductionHungerCost = DEFAULT_RABBIT_REPRODUCTION_HUNGER_COST;
+let foxHungerIncrease = DEFAULT_FOX_HUNGER_INCREASE;
+let foxHungerDecrease = DEFAULT_FOX_HUNGER_DECREASE;
+let foxReproductionThreshold = DEFAULT_FOX_REPRODUCTION_THRESHOLD;
+let foxReproductionChance = DEFAULT_FOX_REPRODUCTION_CHANCE;
+let foxReproductionHungerCost = DEFAULT_FOX_REPRODUCTION_HUNGER_COST;
 let maxHistory = 200;
 let rabbitPopulationHistory = [];
 let foxPopulationHistory = [];
@@ -47,9 +61,112 @@ cells = createGrid(GRID_WIDTH, GRID_HEIGHT);
 populateGrid(cells);
 gameLoop();
 
+
 document.getElementById("tickRateRange").addEventListener("input", function () {
-    tickRate = 101 - this.value
-    document.getElementById("speedDisplay").textContent = this.value;
+    tickRate = 101 - this.value;
+    document.getElementById("speedDisplay").textContent = Math.round((DEFAULT_TICK_RATE / tickRate) * 100) + "%";
+});
+
+// Rabbit parameters
+document.getElementById("rabbitHungerDecreaseSlider").addEventListener("input", function () {
+    rabbitHungerDecrease = Number(this.value);
+    document.getElementById("rabbitHungerDecreaseInput").value = this.value;
+});
+document.getElementById("rabbitHungerDecreaseInput").addEventListener("input", function () {
+    rabbitHungerDecrease = Number(this.value);
+    document.getElementById("rabbitHungerDecreaseSlider").value = this.value;
+});
+
+document.getElementById("rabbitHungerIncreaseSlider").addEventListener("input", function () {
+    rabbitHungerIncrease = Number(this.value);
+    document.getElementById("rabbitHungerIncreaseInput").value = this.value;
+});
+document.getElementById("rabbitHungerIncreaseInput").addEventListener("input", function () {
+    rabbitHungerIncrease = Number(this.value);
+    document.getElementById("rabbitHungerIncreaseSlider").value = this.value;
+});
+
+document.getElementById("rabbitReproductionThresholdSlider").addEventListener("input", function () {
+    rabbitReproductionThreshold = Number(this.value);
+    document.getElementById("rabbitReproductionThresholdInput").value = this.value;
+});
+document.getElementById("rabbitReproductionThresholdInput").addEventListener("input", function () {
+    rabbitReproductionThreshold = Number(this.value);
+    document.getElementById("rabbitReproductionThresholdSlider").value = this.value;
+});
+
+document.getElementById("rabbitReproductionChanceSlider").addEventListener("input", function () {
+    rabbitReproductionChance = Number(this.value);
+    document.getElementById("rabbitReproductionChanceInput").value = this.value;
+});
+document.getElementById("rabbitReproductionChanceInput").addEventListener("input", function () {
+    rabbitReproductionChance = Number(this.value);
+    document.getElementById("rabbitReproductionChanceSlider").value = this.value;
+});
+
+document.getElementById("rabbitReproductionHungerCostSlider").addEventListener("input", function () {
+    rabbitReproductionHungerCost = Number(this.value);
+    document.getElementById("rabbitReproductionHungerCostInput").value = this.value;
+});
+document.getElementById("rabbitReproductionHungerCostInput").addEventListener("input", function () {
+    rabbitReproductionHungerCost = Number(this.value);
+    document.getElementById("rabbitReproductionHungerCostSlider").value = this.value;
+});
+
+// Fox parameters
+document.getElementById("foxHungerDecreaseSlider").addEventListener("input", function () {
+    foxHungerDecrease = Number(this.value);
+    document.getElementById("foxHungerDecreaseInput").value = this.value;
+});
+document.getElementById("foxHungerDecreaseInput").addEventListener("input", function () {
+    foxHungerDecrease = Number(this.value);
+    document.getElementById("foxHungerDecreaseSlider").value = this.value;
+});
+
+document.getElementById("foxHungerIncreaseSlider").addEventListener("input", function () {
+    foxHungerIncrease = Number(this.value);
+    document.getElementById("foxHungerIncreaseInput").value = this.value;
+});
+document.getElementById("foxHungerIncreaseInput").addEventListener("input", function () {
+    foxHungerIncrease = Number(this.value);
+    document.getElementById("foxHungerIncreaseSlider").value = this.value;
+});
+
+document.getElementById("foxReproductionThresholdSlider").addEventListener("input", function () {
+    foxReproductionThreshold = Number(this.value);
+    document.getElementById("foxReproductionThresholdInput").value = this.value;
+});
+document.getElementById("foxReproductionThresholdInput").addEventListener("input", function () {
+    foxReproductionThreshold = Number(this.value);
+    document.getElementById("foxReproductionThresholdSlider").value = this.value;
+});
+
+document.getElementById("foxReproductionChanceSlider").addEventListener("input", function () {
+    foxReproductionChance = Number(this.value);
+    document.getElementById("foxReproductionChanceInput").value = this.value;
+});
+document.getElementById("foxReproductionChanceInput").addEventListener("input", function () {
+    foxReproductionChance = Number(this.value);
+    document.getElementById("foxReproductionChanceSlider").value = this.value;
+});
+
+document.getElementById("foxReproductionHungerCostSlider").addEventListener("input", function () {
+    foxReproductionHungerCost = Number(this.value);
+    document.getElementById("foxReproductionHungerCostInput").value = this.value;
+});
+document.getElementById("foxReproductionHungerCostInput").addEventListener("input", function () {
+    foxReproductionHungerCost = Number(this.value);
+    document.getElementById("foxReproductionHungerCostSlider").value = this.value;
+});
+
+// Grass parameters
+document.getElementById("grassSpawnChanceSlider").addEventListener("input", function () {
+    grassSpawnChance = Number(this.value);
+    document.getElementById("grassSpawnChanceInput").value = this.value;
+});
+document.getElementById("grassSpawnChanceInput").addEventListener("input", function () {
+    grassSpawnChance = Number(this.value);
+    document.getElementById("grassSpawnChanceSlider").value = this.value;
 });
 
 function reset() {
@@ -58,6 +175,44 @@ function reset() {
     rabbitPopulationHistory = [];
     foxPopulationHistory = [];
     tick = 0;
+
+    tickRate = DEFAULT_TICK_RATE;
+    grassSpawnChance = DEFAULT_GRASS_SPAWN_CHANCE;
+    rabbitHungerIncrease = DEFAULT_RABBIT_HUNGER_INCREASE;
+    rabbitHungerDecrease = DEFAULT_RABBIT_HUNGER_DECREASE;
+    rabbitReproductionThreshold = DEFAULT_RABBIT_REPRODUCTION_THRESHOLD;
+    rabbitReproductionChance = DEFAULT_RABBIT_REPRODUCTION_CHANCE;
+    rabbitReproductionHungerCost = DEFAULT_RABBIT_REPRODUCTION_HUNGER_COST;
+    foxHungerIncrease = DEFAULT_FOX_HUNGER_INCREASE;
+    foxHungerDecrease = DEFAULT_FOX_HUNGER_DECREASE;
+    foxReproductionThreshold = DEFAULT_FOX_REPRODUCTION_THRESHOLD;
+    foxReproductionChance = DEFAULT_FOX_REPRODUCTION_CHANCE;
+    foxReproductionHungerCost = DEFAULT_FOX_REPRODUCTION_HUNGER_COST;
+
+    document.getElementById("tickRateRange").value = Math.round((DEFAULT_TICK_RATE / tickRate) * 100) + "%";
+    document.getElementById("speedDisplay").textContent = "100%";
+    document.getElementById("rabbitHungerDecreaseSlider").value = DEFAULT_RABBIT_HUNGER_DECREASE;
+    document.getElementById("rabbitHungerDecreaseInput").value = DEFAULT_RABBIT_HUNGER_DECREASE;
+    document.getElementById("rabbitHungerIncreaseSlider").value = DEFAULT_RABBIT_HUNGER_INCREASE;
+    document.getElementById("rabbitHungerIncreaseInput").value = DEFAULT_RABBIT_HUNGER_INCREASE;
+    document.getElementById("rabbitReproductionThresholdSlider").value = DEFAULT_RABBIT_REPRODUCTION_THRESHOLD;
+    document.getElementById("rabbitReproductionThresholdInput").value = DEFAULT_RABBIT_REPRODUCTION_THRESHOLD;
+    document.getElementById("rabbitReproductionChanceSlider").value = DEFAULT_RABBIT_REPRODUCTION_CHANCE;
+    document.getElementById("rabbitReproductionChanceInput").value = DEFAULT_RABBIT_REPRODUCTION_CHANCE;
+    document.getElementById("rabbitReproductionHungerCostSlider").value = DEFAULT_RABBIT_REPRODUCTION_HUNGER_COST;
+    document.getElementById("rabbitReproductionHungerCostInput").value = DEFAULT_RABBIT_REPRODUCTION_HUNGER_COST;
+    document.getElementById("foxHungerDecreaseSlider").value = DEFAULT_FOX_HUNGER_DECREASE;
+    document.getElementById("foxHungerDecreaseInput").value = DEFAULT_FOX_HUNGER_DECREASE;
+    document.getElementById("foxHungerIncreaseSlider").value = DEFAULT_FOX_HUNGER_INCREASE;
+    document.getElementById("foxHungerIncreaseInput").value = DEFAULT_FOX_HUNGER_INCREASE;
+    document.getElementById("foxReproductionThresholdSlider").value = DEFAULT_FOX_REPRODUCTION_THRESHOLD;
+    document.getElementById("foxReproductionThresholdInput").value = DEFAULT_FOX_REPRODUCTION_THRESHOLD;
+    document.getElementById("foxReproductionChanceSlider").value = DEFAULT_FOX_REPRODUCTION_CHANCE;
+    document.getElementById("foxReproductionChanceInput").value = DEFAULT_FOX_REPRODUCTION_CHANCE;
+    document.getElementById("foxReproductionHungerCostSlider").value = DEFAULT_FOX_REPRODUCTION_HUNGER_COST;
+    document.getElementById("foxReproductionHungerCostInput").value = DEFAULT_FOX_REPRODUCTION_HUNGER_COST;
+    document.getElementById("grassSpawnChanceSlider").value = DEFAULT_GRASS_SPAWN_CHANCE;
+    document.getElementById("grassSpawnChanceInput").value = DEFAULT_GRASS_SPAWN_CHANCE;
 }
 
 function countEntitites(type) {
@@ -83,7 +238,7 @@ function gameLoop() {
     renderCombinedChart(CHART_WIDTH, CHART_HEIGHT, rabbitPopulationHistory, "#e8d5b0", foxPopulationHistory, "orange");
     document.getElementById("rabbitCount").textContent = "Rabbits: " + rabbitCount
     document.getElementById("foxCount").textContent = "Foxes: " + foxCount
-    document.getElementById("combinedCount").textContent = "Rabbits + Foxes: " + (foxCount+rabbitCount)
+    document.getElementById("combinedCount").textContent = "Rabbits + Foxes: " + (foxCount + rabbitCount)
     tick++;
     if (tick % tickRate == 0) {
         cells = updateGrid(cells);
@@ -217,7 +372,7 @@ function renderCombinedChart(chart1Width, chart1Height, chart1PopHistory, chart1
     combinedCtx.fill();
     combinedCtx.stroke();
     document.getElementById("maxRabbitValue").textContent = "Max Rabbit value: " + max;
-    
+
 
     if (chart2PopHistory.length == 0) return;
     max = Math.max(...chart2PopHistory);
