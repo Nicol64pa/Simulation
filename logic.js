@@ -403,15 +403,27 @@ function renderCombinedChart(chart1Width, chart1Height, chart1PopHistory, chart1
 function renderGrid(grid) {
     for (let i = 0; i < grid.length; i++) {
         for (let j = 0; j < grid[i].length; j++) {
-            if (grid[i][j].occupant != null) {
+            if (grid[i][j].occupant != null && grid[i][j].occupant.hunger != null) {
+                ctx.fillStyle = calculateColor(grid[i][j].occupant.color, grid[i][j].occupant.hunger, grid[i][j].occupant.maxHunger);
+                ctx.fillRect(j * CELL_SIZE, i * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+            }else if(grid[i][j].occupant != null){
                 ctx.fillStyle = grid[i][j].occupant.color;
                 ctx.fillRect(j * CELL_SIZE, i * CELL_SIZE, CELL_SIZE, CELL_SIZE);
-            } else {
+            }else {
                 ctx.fillStyle = "#c8a96e";
                 ctx.fillRect(j * CELL_SIZE, i * CELL_SIZE, CELL_SIZE, CELL_SIZE);
             }
         }
     }
+}
+
+function calculateColor(color, hunger, maxHunger) {
+    let r = parseInt(color.slice(1, 3), 16);
+    let g = parseInt(color.slice(3, 5), 16);
+    let b = parseInt(color.slice(5, 7), 16);
+    let brightness = 0.3 + (hunger / maxHunger) * 0.7;
+    let rgb = `rgb(${Math.floor(r * brightness)}, ${Math.floor(g * brightness)}, ${Math.floor(b * brightness)})`;
+    return rgb;
 }
 
 function clearGrid(grid) {
@@ -682,11 +694,11 @@ function createGrass() {
 }
 
 function createRabbit() {
-    let rabbit = { color: "#e8d5b0", type: "rabbit", hunger: 200 }
+    let rabbit = { color: "#e8d5b0", type: "rabbit", hunger: 200, maxHunger: 200 }
     return rabbit;
 }
 
 function createFox() {
-    let fox = { color: "orange", type: "fox", hunger: 400 }
+    let fox = { color: "#e06010"  , type: "fox", hunger: 400, maxHunger: 400 }
     return fox;
 }

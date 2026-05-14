@@ -12,43 +12,65 @@
     <p>A predator-prey simulation demonstrating emergent Lotka-Volterra population dynamics. Foxes hunt rabbits, rabbits
         eat grass, and complex cycles emerge from simple rules.</p>
     <div style="display: flex; gap: 32px; align-items: flex-start;">
-        <canvas height="512" width="512"></canvas>
+        <div style="display: flex; flex-direction: column; align-items: flex-start;">
+            <canvas height="512" width="512"></canvas>
+            <div style="display: flex; gap: 16px; margin-top: 8px; font-size: 13px; color: #aaaaaa;">
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <div style="width: 14px; height: 14px; background: #2d6a1f;"></div>
+                    <span>Grass</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <div style="width: 14px; height: 14px; background: #e8d5b0;"></div>
+                    <span>Rabbit (full)</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <div style="width: 14px; height: 14px; background: #4d4637;"></div>
+                    <span>Rabbit (starving)</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <div style="width: 14px; height: 14px; background: #e06010;"></div>
+                    <span>Fox (full)</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <div style="width: 14px; height: 14px; background: #431d05;"></div>
+                    <span>Fox (starving)</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <div style="width: 14px; height: 14px; background: #c8a96e;"></div>
+                    <span>Empty</span>
+                </div>
+            </div>
+        </div>
         <div class="charts-panel">
             <div class="chart-container">
                 <h3>Rabbit Population</h3>
                 <div style="display: flex; gap: 16px; align-items: flex-start;">
                     <canvas id="rabbitChart" width="500" height="150"></canvas>
                     <div class="param-controls">
-                        <div class="param-controls">
-                            <div class="param-control">
-                                <label>Hunger decrease:</label>
-                                <input type="range" min="1" max="50" value="10" id="rabbitHungerDecreaseSlider">
-                                <input type="number" min="1" max="50" value="10" id="rabbitHungerDecreaseInput">
-                            </div>
-                            <div class="param-control">
-                                <label>Hunger increase:</label>
-                                <input type="range" min="1" max="50" value="25" id="rabbitHungerIncreaseSlider">
-                                <input type="number" min="1" max="50" value="25" id="rabbitHungerIncreaseInput">
-                            </div>
-                            <div class="param-control">
-                                <label>Reproduction threshold:</label>
-                                <input type="range" min="50" max="300" value="150"
-                                    id="rabbitReproductionThresholdSlider">
-                                <input type="number" min="50" max="300" value="150"
-                                    id="rabbitReproductionThresholdInput">
-                            </div>
-                            <div class="param-control">
-                                <label>Reproduction chance:</label>
-                                <input type="range" min="1" max="100" value="20" id="rabbitReproductionChanceSlider">
-                                <input type="number" min="1" max="100" value="20" id="rabbitReproductionChanceInput">
-                            </div>
-                            <div class="param-control">
-                                <label>Reproduction hunger cost:</label>
-                                <input type="range" min="10" max="200" value="50"
-                                    id="rabbitReproductionHungerCostSlider">
-                                <input type="number" min="10" max="200" value="50"
-                                    id="rabbitReproductionHungerCostInput">
-                            </div>
+                        <div class="param-control">
+                            <label>Hunger decrease:</label>
+                            <input type="range" min="1" max="50" value="10" id="rabbitHungerDecreaseSlider">
+                            <input type="number" min="1" max="50" value="10" id="rabbitHungerDecreaseInput">
+                        </div>
+                        <div class="param-control">
+                            <label>Hunger increase:</label>
+                            <input type="range" min="1" max="50" value="25" id="rabbitHungerIncreaseSlider">
+                            <input type="number" min="1" max="50" value="25" id="rabbitHungerIncreaseInput">
+                        </div>
+                        <div class="param-control">
+                            <label>Reproduction threshold:</label>
+                            <input type="range" min="50" max="300" value="150" id="rabbitReproductionThresholdSlider">
+                            <input type="number" min="50" max="300" value="150" id="rabbitReproductionThresholdInput">
+                        </div>
+                        <div class="param-control">
+                            <label>Reproduction chance:</label>
+                            <input type="range" min="1" max="100" value="20" id="rabbitReproductionChanceSlider">
+                            <input type="number" min="1" max="100" value="20" id="rabbitReproductionChanceInput">
+                        </div>
+                        <div class="param-control">
+                            <label>Reproduction hunger cost:</label>
+                            <input type="range" min="10" max="200" value="50" id="rabbitReproductionHungerCostSlider">
+                            <input type="number" min="10" max="200" value="50" id="rabbitReproductionHungerCostInput">
                         </div>
                     </div>
                 </div>
@@ -60,32 +82,30 @@
                 <div style="display: flex; gap: 16px; align-items: flex-start;">
                     <canvas id="foxChart" width="500" height="150"></canvas>
                     <div class="param-controls">
-                        <div class="param-controls">
-                            <div class="param-control">
-                                <label>Hunger decrease:</label>
-                                <input type="range" min="1" max="50" value="25" id="foxHungerDecreaseSlider">
-                                <input type="number" min="1" max="50" value="25" id="foxHungerDecreaseInput">
-                            </div>
-                            <div class="param-control">
-                                <label>Hunger increase:</label>
-                                <input type="range" min="1" max="50" value="20" id="foxHungerIncreaseSlider">
-                                <input type="number" min="1" max="50" value="20" id="foxHungerIncreaseInput">
-                            </div>
-                            <div class="param-control">
-                                <label>Reproduction threshold:</label>
-                                <input type="range" min="50" max="400" value="200" id="foxReproductionThresholdSlider">
-                                <input type="number" min="50" max="400" value="200" id="foxReproductionThresholdInput">
-                            </div>
-                            <div class="param-control">
-                                <label>Reproduction chance:</label>
-                                <input type="range" min="1" max="100" value="5" id="foxReproductionChanceSlider">
-                                <input type="number" min="1" max="100" value="5" id="foxReproductionChanceInput">
-                            </div>
-                            <div class="param-control">
-                                <label>Reproduction hunger cost:</label>
-                                <input type="range" min="10" max="200" value="100" id="foxReproductionHungerCostSlider">
-                                <input type="number" min="10" max="200" value="100" id="foxReproductionHungerCostInput">
-                            </div>
+                        <div class="param-control">
+                            <label>Hunger decrease:</label>
+                            <input type="range" min="1" max="50" value="25" id="foxHungerDecreaseSlider">
+                            <input type="number" min="1" max="50" value="25" id="foxHungerDecreaseInput">
+                        </div>
+                        <div class="param-control">
+                            <label>Hunger increase:</label>
+                            <input type="range" min="1" max="50" value="20" id="foxHungerIncreaseSlider">
+                            <input type="number" min="1" max="50" value="20" id="foxHungerIncreaseInput">
+                        </div>
+                        <div class="param-control">
+                            <label>Reproduction threshold:</label>
+                            <input type="range" min="50" max="400" value="200" id="foxReproductionThresholdSlider">
+                            <input type="number" min="50" max="400" value="200" id="foxReproductionThresholdInput">
+                        </div>
+                        <div class="param-control">
+                            <label>Reproduction chance:</label>
+                            <input type="range" min="1" max="100" value="5" id="foxReproductionChanceSlider">
+                            <input type="number" min="1" max="100" value="5" id="foxReproductionChanceInput">
+                        </div>
+                        <div class="param-control">
+                            <label>Reproduction hunger cost:</label>
+                            <input type="range" min="10" max="200" value="100" id="foxReproductionHungerCostSlider">
+                            <input type="number" min="10" max="200" value="100" id="foxReproductionHungerCostInput">
                         </div>
                     </div>
                 </div>
@@ -106,8 +126,6 @@
                 </div>
                 <span id="combinedCount">Total: 0</span>
             </div>
-
-
         </div>
     </div>
     <div style="display: flex; align-items: center; gap: 16px; margin-top: 8px;">
@@ -115,7 +133,6 @@
         <input type="range" min="1" max="100" value="91" id="tickRateRange">
         <span id="speedDisplay">100%</span>
         <button onclick="reset()">Reset</button>
-    </div>
     </div>
     <script src="logic.js"></script>
 </body>
